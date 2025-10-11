@@ -16,9 +16,11 @@ spring:
 
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:7432/ewm-stats
-    username: root
-    password: root
+    url: jdbc:postgresql://localhost:4432/event-db
+    username: event
+    password: event
+
+eventServiceName: event-service
 
 resilience4j:
   circuitbreaker:
