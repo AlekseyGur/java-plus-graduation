@@ -1,12 +1,6 @@
 package ru.practicum.event.service.category.service;
 
 import lombok.RequiredArgsConstructor;
-import ru.practicum.interaction.api.dto.category.CategoryDto;
-import ru.practicum.interaction.api.dto.category.NewCategoryDto;
-import ru.practicum.interaction.api.exception.ConflictDataException;
-import ru.practicum.interaction.api.exception.DuplicateException;
-import ru.practicum.interaction.api.exception.NotFoundException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +8,11 @@ import ru.practicum.event.service.category.mapper.CategoryMapper;
 import ru.practicum.event.service.category.model.Category;
 import ru.practicum.event.service.category.repository.CategoryRepository;
 import ru.practicum.event.service.event.repository.EventRepository;
+import ru.practicum.interaction.api.dto.category.CategoryDto;
+import ru.practicum.interaction.api.dto.category.NewCategoryDto;
+import ru.practicum.interaction.api.exception.ConflictDataException;
+import ru.practicum.interaction.api.exception.DuplicateException;
+import ru.practicum.interaction.api.exception.NotFoundException;
 
 import java.util.List;
 
@@ -28,12 +27,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        try {
-            Category category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
-            return CategoryMapper.toCategoryDto(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new DuplicateException("Категория с таким именем уже существует");
+        String categoryName = newCategoryDto.getName();
+
+        if (categoryRepository.existsByName(categoryName)) {
+            throw new DuplicateException("Категория с таким именем уже существует: " + categoryName);
         }
+
+        Category category = CategoryMapper.toCategory(newCategoryDto);
+        Category savedCategory = categoryRepository.save(category);
+        return CategoryMapper.toCategoryDto(savedCategory);
     }
 
     @Transactional
@@ -54,17 +56,25 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = checkCategory(catId);
 
         if (!category.getName().equals(categoryDto.getName())) {
+            if (categoryRepository.existsByName(categoryDto.getName())) {
+                throw new DuplicateException("Категория с именем '" + categoryDto.getName() + "' уже существует");
+            }
             category.setName(categoryDto.getName());
         }
 
-        return CategoryMapper.toCategoryDto(category);
+        Category updatedCategory = categoryRepository.save(category);
+        return CategoryMapper.toCategoryDto(updatedCategory);
     }
 
     @Override
     public List<CategoryDto> getCategories(Integer from, Integer size) {
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        if (from == null || size == null || from < 0 || size <= 0) {
+            throw new IllegalArgumentException("Некорректные параметры пагинации: from=" + from + ", size=" + size);
+        }
 
-        return categoryRepository.findAll(pageRequest).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        return categoryRepository.findAll(pageRequest)
+                .stream()
                 .map(CategoryMapper::toCategoryDto)
                 .toList();
     }
