@@ -28,8 +28,6 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-@Slf4j
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -42,7 +40,6 @@ public class CommentServiceImpl implements CommentService {
     private final String EVENT_NOT_FOUND = "Событие не найдено.";
     private final String USER_NOT_COMMENT = "Пользователь не оставлял комментарий.";
 
-    @Transactional
     @Override
     public CommentDto createComment(Long eventId, Long userId, NewCommentDto newCommentDto) {
         checkEventId(eventId);
@@ -61,7 +58,6 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toCommentDto(commentRepository.save(comment),event.getAnnotation(),user.getName());
     }
 
-    @Transactional
     @Override
     public CommentDto updateComment(Long userId, Long eventId, Long commentId, NewCommentDto newCommentDto) {
         checkEventId(eventId);
@@ -85,7 +81,6 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toCommentDto(comment,event.getAnnotation(), user.getName());
     }
 
-    @Transactional
     @Override
     public void deleteComment(Long userId, Long eventId, Long commentId) {
         checkEventId(eventId);
@@ -106,7 +101,6 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Transactional
     @Override
     public void deleteComment(Long commentId, Long eventId) {
         checkEventId(eventId);
@@ -133,7 +127,6 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Transactional
     @Override
     public CommentDto addLike(Long userId, Long commentId) {
         if (userClient.findById(userId)== null) {
@@ -151,7 +144,6 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toCommentDto(comment, event.getAnnotation(), user.getName());
     }
 
-    @Transactional
     @Override
     public void deleteLike(Long userId, Long commentId) {
         if (userClient.findById(userId)== null) {
@@ -171,7 +163,6 @@ public class CommentServiceImpl implements CommentService {
         return CommentMapper.toCommentDto(comment, event.getAnnotation(), user.getName());
     }
 
-    @Transactional
     @Override
     public UserDtoForAdmin addBanCommited(Long userId, Long eventId) {
         checkEventId(eventId);
@@ -181,7 +172,6 @@ public class CommentServiceImpl implements CommentService {
         return userClient.adminFindById(userId);
     }
 
-    @Transactional
     @Override
     public void deleteBanCommited(Long userId, Long eventId) {
         checkEventId(eventId);
