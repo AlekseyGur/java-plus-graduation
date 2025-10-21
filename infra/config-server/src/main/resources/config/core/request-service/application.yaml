@@ -16,9 +16,9 @@ spring:
 
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:7432/ewm-stats
-    username: root
-    password: root
+    url: jdbc:postgresql://localhost:3432/request-db
+    username: request
+    password: request
 
 resilience4j:
   circuitbreaker:
@@ -31,3 +31,10 @@ resilience4j:
         slidingWindowType: COUNT_BASED
         minimumNumberOfCalls: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
+grpc:
+  client:
+    collector:
+      address: 'discovery:///collector'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
