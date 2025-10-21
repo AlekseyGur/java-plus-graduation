@@ -1,7 +1,7 @@
-package ru.practicum.comment.service.mapper;
+package ru.practicum.ewm.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.comment.service.model.Comment;
+import ru.practicum.ewm.model.Comment;
 import ru.practicum.interaction.api.dto.comment.CommentDto;
 import ru.practicum.interaction.api.dto.comment.NewCommentDto;
 

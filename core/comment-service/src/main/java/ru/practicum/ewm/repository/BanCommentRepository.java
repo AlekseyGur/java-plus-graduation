@@ -1,7 +1,7 @@
-package ru.practicum.comment.service.repository;
+package ru.practicum.ewm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.comment.service.model.BanComment;
+import ru.practicum.ewm.model.BanComment;
 
 public interface BanCommentRepository extends JpaRepository<BanComment, Long> {
 

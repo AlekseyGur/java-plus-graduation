@@ -1,10 +1,10 @@
-package ru.practicum.comment.service.controller;
+package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.service.service.CommentService;
+import ru.practicum.ewm.service.CommentService;
 import ru.practicum.interaction.api.dto.comment.CommentDto;
 import ru.practicum.interaction.api.dto.comment.NewCommentDto;
 

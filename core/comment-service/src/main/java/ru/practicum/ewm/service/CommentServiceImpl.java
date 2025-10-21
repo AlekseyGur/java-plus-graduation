@@ -1,4 +1,4 @@
-package ru.practicum.comment.service.service;
+package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,10 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.comment.service.mapper.CommentMapper;
-import ru.practicum.comment.service.model.Comment;
-import ru.practicum.comment.service.repository.BanCommentRepository;
-import ru.practicum.comment.service.repository.CommentRepository;
+import ru.practicum.ewm.mapper.CommentMapper;
+import ru.practicum.ewm.model.Comment;
+import ru.practicum.ewm.repository.BanCommentRepository;
+import ru.practicum.ewm.repository.CommentRepository;
 import ru.practicum.interaction.api.dto.comment.CommentDto;
 import ru.practicum.interaction.api.dto.comment.NewCommentDto;
 import ru.practicum.interaction.api.dto.event.EventFullDto;
