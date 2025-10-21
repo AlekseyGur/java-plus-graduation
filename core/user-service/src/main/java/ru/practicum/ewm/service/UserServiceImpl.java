@@ -1,4 +1,4 @@
-package ru.practicum.user.service.service;
+package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,8 @@ import ru.practicum.interaction.api.dto.user.UserDto;
 import ru.practicum.interaction.api.dto.user.UserDtoForAdmin;
 import ru.practicum.interaction.api.exception.DuplicateException;
 import ru.practicum.interaction.api.exception.NotFoundException;
-import ru.practicum.user.service.mapper.UserMapper;
-import ru.practicum.user.service.repository.UserRepository;
+import ru.practicum.ewm.mapper.UserMapper;
+import ru.practicum.ewm.repository.UserRepository;
 
 import java.util.List;
 

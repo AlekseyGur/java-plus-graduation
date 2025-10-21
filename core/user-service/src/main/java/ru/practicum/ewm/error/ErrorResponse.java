@@ -1,4 +1,4 @@
-package ru.practicum.user.service.error;
+package ru.practicum.ewm.error;
 
 public record ErrorResponse(String error) {
 }

@@ -1,4 +1,4 @@
-package ru.practicum.user.service.error;
+package ru.practicum.ewm.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
