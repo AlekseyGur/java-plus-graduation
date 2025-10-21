@@ -1,11 +1,11 @@
-package ru.practicum.request.service.controller;
+package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.interaction.api.enums.request.Status;
 import ru.practicum.interaction.api.dto.request.ParticipationRequestDto;
-import ru.practicum.request.service.service.ParticipationRequestService;
+import ru.practicum.ewm.service.ParticipationRequestService;
 
 import java.util.List;
 import java.util.Map;
@@ -39,5 +39,11 @@ public class AdminParticipationRequestController {
     @PutMapping("/status/{id}/{status}")
     public ParticipationRequestDto setStatusRequest(@PathVariable Long id, @PathVariable Status status) {
         return requestService.setStatusRequest(id, status);
+    }
+
+    @GetMapping("/{eventId}/check-user-confirmed/{userId}")
+    public boolean checkExistsByEventIdAndRequesterIdAndStatus(@PathVariable Long eventId,@PathVariable Long userId,
+                                                               @RequestParam Status status) {
+        return requestService.checkExistsByEventIdAndRequesterIdAndStatus(eventId, userId, status);
     }
 }

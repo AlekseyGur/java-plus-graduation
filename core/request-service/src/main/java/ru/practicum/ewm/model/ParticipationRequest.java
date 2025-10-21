@@ -1,4 +1,4 @@
-package ru.practicum.request.service.model;
+package ru.practicum.ewm.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

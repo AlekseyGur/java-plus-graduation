@@ -1,20 +1,23 @@
-package ru.practicum.request.service.service;
+package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.UserActionClient;
+import ru.practicum.ewm.grpc.stats.event.ActionTypeProto;
 import ru.practicum.interaction.api.enums.request.Status;
 import ru.practicum.interaction.api.exception.*;
 import ru.practicum.interaction.api.exception.ValidationException;
 import ru.practicum.interaction.api.feignClient.client.user.UserClient;
-import ru.practicum.request.service.mapper.ParticipationRequestMapper;
-import ru.practicum.request.service.model.ParticipationRequest;
-import ru.practicum.request.service.repository.ParticipationRequestRepository;
+import ru.practicum.ewm.mapper.ParticipationRequestMapper;
+import ru.practicum.ewm.model.ParticipationRequest;
+import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.interaction.api.feignClient.client.event.AdminEventClient;
 import ru.practicum.interaction.api.enums.event.State;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final ParticipationRequestRepository requestRepository;
     private final UserClient userClient;
     private final AdminEventClient adminEventClient;
+    private final UserActionClient userActionClient;
 
     @Transactional
     @Override
@@ -51,13 +55,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
         Integer participantLimit = event.getParticipantLimit();
         Integer confirmedRequests = event.getConfirmedRequests();
-        if (!participantLimit.equals(0) && participantLimit.equals(confirmedRequests)) {
+        if (!participantLimit.equals(0) && (participantLimit <= confirmedRequests)) {
             throw new ConflictDataException("Лимит запросов на участие в событии уже достигнут");
         }
         Status status;
         if (participantLimit.equals(0) || !event.getRequestModeration()) {
             status = Status.CONFIRMED;
-            event.setConfirmedRequests(++confirmedRequests);
+            adminEventClient.setConfirmedRequests(eventId, ++confirmedRequests);
         } else
             status = Status.PENDING;
         ParticipationRequest participationRequest = ParticipationRequest.builder()
@@ -65,7 +69,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .eventId(eventId)
                 .status(status)
                 .build();
-        return ParticipationRequestMapper.toParticipationRequestDto(requestRepository.save(participationRequest));
+        ParticipationRequestDto participationRequestDto = ParticipationRequestMapper.toParticipationRequestDto(requestRepository.save(participationRequest));
+
+        userActionClient.collectUserAction(eventId, userId, ActionTypeProto.ACTION_REGISTER, Instant.now());
+
+        return participationRequestDto;
     }
 
     @Transactional
@@ -149,6 +157,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .orElseThrow(() -> new NotFoundException(" не найдено запроса с id: " + id));
         result.setStatus(status);
         return ParticipationRequestMapper.toParticipationRequestDto(result);
+    }
+
+    @Override
+    public boolean checkExistsByEventIdAndRequesterIdAndStatus(Long eventId, Long userId, Status status) {
+        return requestRepository.existsByEventIdAndRequesterIdAndStatus(eventId, userId, status);
     }
 
     private void checkExistsUserById(Long userId) {
